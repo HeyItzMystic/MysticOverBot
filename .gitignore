@@ -9,3 +9,5 @@ banned.json
 *.class
 *.bak
 *.txt
+/target
+old_code.txt
