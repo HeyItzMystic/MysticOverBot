@@ -22,7 +22,7 @@ public class SQLiteDataSource {
     
     static {
     	try {
-    		final File dbFile = new File(Constants.databasepath);
+    		final File dbFile = new File(Constants.path + Constants.databasepath);
     		if (!dbFile.exists()) {
     			if (dbFile.createNewFile()) {
     				logger.info("New Database was Created");
@@ -35,7 +35,7 @@ public class SQLiteDataSource {
     		e.printStackTrace();
     	}
     	
-    	config.setJdbcUrl("jdbc:sqlite:" + Constants.databasepath);
+    	config.setJdbcUrl("jdbc:sqlite:" + Constants.path + Constants.databasepath);
     	config.setConnectionTestQuery("SELECT 1");
     	config.addDataSourceProperty("cachePrepStmts", true);
     	config.addDataSourceProperty("prepStmtCacheSize", "250");

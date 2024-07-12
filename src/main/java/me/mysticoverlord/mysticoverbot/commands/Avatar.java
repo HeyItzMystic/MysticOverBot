@@ -38,7 +38,7 @@ implements ICommand {
         
         if (mentioned.size() == 0) {
         	if (args.size() != 0) {
-        		event.getChannel().sendMessage("No User found under the query ``" + args.toString()).queue();
+        		event.getChannel().sendMessage("No User found under the query `" + args.toString() + "`").queue();
        	} else {
        		mentioned.add(author);
        	}
@@ -60,7 +60,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + " ``<@User>``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + " `<@User>`";
     }
 }
 

@@ -24,7 +24,7 @@ implements ICommand {
         TextChannel channel = event.getChannel();
         String id = event.getGuild().getId();
         if (!member.hasPermission(Permission.ADMINISTRATOR)) {
-            channel.sendMessage("You don't have the required permission! ``Administrator``").queue();
+            channel.sendMessage("You don't have the required permission! `Administrator`").queue();
             return;
         }
         if (args.isEmpty()) {
@@ -50,7 +50,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + " ``<prefix>``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + " `<prefix>`";
     }
 }
 

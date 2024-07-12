@@ -25,11 +25,11 @@ implements ICommand {
         Member member = event.getMember();
         Member selfMember = event.getGuild().getSelfMember();
         if (!member.hasPermission(Permission.MESSAGE_MANAGE)) {
-            channel.sendMessage("You don't have the required Permission to use this command!\n``Manage Messages``").queue();
+            channel.sendMessage("You don't have the required Permission to use this command!\n`Manage Messages`").queue();
             return;
         }
         if (!selfMember.hasPermission(Permission.MESSAGE_MANAGE)) {
-            channel.sendMessage("Bot doesn't have the required Permission to activate this command!\n``Manage Messages``").queue();
+            channel.sendMessage("Bot doesn't have the required Permission to activate this command!\n`Manage Messages`").queue();
             return;
         }
         if (args.isEmpty()) {
@@ -81,7 +81,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + "``2-100``\nNote: only deletes messages which are younger than 2 weeks!";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + "`2-100`\nNote: only deletes messages which are younger than 2 weeks!";
     }
 }
 

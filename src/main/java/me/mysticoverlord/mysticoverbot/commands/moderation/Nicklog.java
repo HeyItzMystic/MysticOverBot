@@ -18,12 +18,12 @@ public class Nicklog implements ICommand{
 		Member author = event.getMember();
 		
 		if (!author.hasPermission(Permission.ADMINISTRATOR)) {
-			event.getChannel().sendMessage("This command requires the ``Administrator`` Permission!").queue();
+			event.getChannel().sendMessage("This command requires the `Administrator` Permission!").queue();
 		return;
 		}
 		
 		if (!event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-			event.getChannel().sendMessage("I don't have the ``Manage Server`` Permission!").queue();
+			event.getChannel().sendMessage("I don't have the `Manage Server` Permission!").queue();
 			return;
 		}
 

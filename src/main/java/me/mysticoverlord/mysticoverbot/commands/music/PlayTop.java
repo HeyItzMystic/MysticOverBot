@@ -53,7 +53,7 @@ public class PlayTop implements ICommand {
         		event.getChannel().sendMessage("The provided Url is not a valid youtube video Url!").queue();
         	}
         } else {
-        channel.sendMessage("Searching for ``" + input + "``").queue();
+        channel.sendMessage("Searching for `" + input + "`").queue();
        
         WebUtils.ins.getJSONObject("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=" + input + "&type=video&key=AIzaSyAd_n5PX2TViv2neTk6y4xu-QDH1zFop48&fields=items(id)").async((json) -> {
             try {
@@ -95,6 +95,6 @@ public class PlayTop implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + " ``<search query>``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + " `<search query>`";
     }
 }

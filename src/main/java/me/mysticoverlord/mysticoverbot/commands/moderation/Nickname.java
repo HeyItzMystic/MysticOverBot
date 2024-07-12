@@ -45,12 +45,12 @@ public class Nickname implements ICommand {
 		}
 		
 		if (!self.hasPermission(Permission.NICKNAME_MANAGE)) {
-			channel.sendMessage("I don't have the Permission: ``Manage Nicknames").queue();
+			channel.sendMessage("I don't have the Permission: `Manage Nicknames").queue();
 			return;
 		}
 		
 		if (!author.hasPermission(Permission.NICKNAME_MANAGE)) {
-			channel.sendMessage("You are missing the Permission: ``Manage Nicknames``").queue();
+			channel.sendMessage("You are missing the Permission: `Manage Nicknames`").queue();
 			return;
 		}
 	
@@ -67,7 +67,7 @@ public class Nickname implements ICommand {
 		String nickname = args.toString().replace(args.get(0), "").replace("[, ", "").replace("]", "").replaceAll(",", "");
 	
 		if (nickname.isBlank()) {
-			channel.sendMessage("Missing parameter: ``nickname``").queue();
+			channel.sendMessage("Missing parameter: `nickname`").queue();
 			return;
 		}
 		

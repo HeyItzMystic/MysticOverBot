@@ -31,7 +31,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + "<search>";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + "`<search>`";
     }
 }
 

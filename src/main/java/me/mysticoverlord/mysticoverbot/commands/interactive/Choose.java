@@ -65,7 +65,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + " ``<obj1> <or> <obj2> [or] [obj3] etc.``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + " `<obj1> <or> <obj2> [or] [obj3] etc.`";
     }
 
 }

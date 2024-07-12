@@ -43,7 +43,7 @@ public class Loopqueue implements IMusic {
 			}
 			
         } else {
-        	channel.sendMessage("You can't loop queue!\nOnly people with a ``DJ`` role or ``Manage Server`` Permission can do that\nBeing alone works too though!").queue();
+        	channel.sendMessage("You can't loop queue!\nOnly people with a `DJ` role or `Manage Server` Permission can do that\nBeing alone works too though!").queue();
         }
 	}
 

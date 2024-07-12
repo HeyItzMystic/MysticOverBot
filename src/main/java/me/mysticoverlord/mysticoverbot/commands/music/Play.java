@@ -82,7 +82,7 @@ public class Play implements IMusic {
         	}
         	
         } else {
-        channel.sendMessage("Searching for ``" + input + "`` on youtube!").queue();
+        channel.sendMessage("Searching for `" + input + "` on youtube!").queue();
        
         WebUtils.ins.getJSONObject("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=" + input + "&type=video&key=" + Main.config.getString("youtube") + "&fields=items(id/videoId)").async((json) -> {
             try {
@@ -164,7 +164,7 @@ public class Play implements IMusic {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + " ``<search query>``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + " `<search query>`";
     }
 
 

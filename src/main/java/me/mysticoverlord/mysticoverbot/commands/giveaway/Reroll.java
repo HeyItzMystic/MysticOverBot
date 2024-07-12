@@ -60,7 +60,7 @@ public class Reroll implements ICommand{
 	@Override
 	public String getUsage() {
 		// TODO Auto-generated method stub
-		return "Usage: " + Constants.PREFIX + getInvoke() + " ``<channelId>`` ``<messageId>``";
+		return "Usage: " + Constants.PREFIX + getInvoke() + " `<channelId>` `<messageId>`";
 	}
 
 

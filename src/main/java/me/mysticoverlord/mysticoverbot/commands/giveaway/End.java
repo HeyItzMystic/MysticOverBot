@@ -33,6 +33,9 @@ public class End implements ICommand{
 		}
 		
 		String Id = args.get(0);
+		if (Id == null) {
+			return;
+		}
 		TextChannel channel = event.getGuild().getTextChannelById(SQLiteUtil.getGiveawayByID(Id));
 		Message message;
 		
@@ -53,7 +56,7 @@ public class End implements ICommand{
 	
 	@Override
 	public String getUsage() {
-		return "Usage:\n" + Constants.PREFIX + "giveaway end ``messageId of the running giveaway``";
+		return "Usage:\n" + Constants.PREFIX + "giveaway end `messageId of the running giveaway`";
 	}
 
 	@Override

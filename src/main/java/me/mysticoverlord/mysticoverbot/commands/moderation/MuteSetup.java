@@ -22,7 +22,7 @@ public class MuteSetup implements ICommand {
 		Member member = event.getMember();
 		try {
 		if (!member.hasPermission(Permission.MANAGE_ROLES)) {
-			event.getChannel().sendMessage("You don't have the required permission: ``Manage Roles``").queue();
+			event.getChannel().sendMessage("You don't have the required permission: `Manage Roles`").queue();
 			return;
 		}
 		} catch (Exception e) {
@@ -30,7 +30,7 @@ public class MuteSetup implements ICommand {
 		}
 		
 		if (!event.getGuild().getMember(event.getJDA().getSelfUser()).hasPermission(Permission.MANAGE_ROLES)) {
-			event.getChannel().sendMessage("I am missing the following permission: ``Manage Roles``").queue();
+			event.getChannel().sendMessage("I am missing the following permission: `Manage Roles`").queue();
 			return;
 		}
 		
@@ -87,7 +87,7 @@ public class MuteSetup implements ICommand {
 	
 		} catch (Exception e) {
 			e.printStackTrace();
-			event.getChannel().sendMessage("Something went wrong while setting up the Role!\nPlease check if i have all needed permissions and try again!\n``Manage Roles``  ``Manage Channels``").queue();
+			event.getChannel().sendMessage("Something went wrong while setting up the Role!\nPlease check if i have all needed permissions and try again!\n`Manage Roles`  `Manage Channels`").queue();
 		}
 			}
 		

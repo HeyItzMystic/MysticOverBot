@@ -33,7 +33,7 @@ public class Seek implements ICommand {
 	@Override
 	public String getUsage() {
 		// TODO Auto-generated method stub
-		return "Usage: " + Constants.PREFIX + getInvoke() + " ``<hh:mm:ss>``";
+		return "Usage: " + Constants.PREFIX + getInvoke() + " `<hh:mm:ss>`";
 	}
 
 }

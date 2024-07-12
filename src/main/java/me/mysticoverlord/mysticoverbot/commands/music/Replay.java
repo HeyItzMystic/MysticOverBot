@@ -39,7 +39,7 @@ public class Replay implements ICommand {
             
             channel.sendMessage("Track Playback starting at 00:00").queue();
         } else {
-        	channel.sendMessage("You can't restart the track!\nOnly people with a ``DJ`` role or ``Manage Server`` Permission can do that!\nBeing alone works too though!").queue();
+        	channel.sendMessage("You can't restart the track!\nOnly people with a `DJ` role or `Manage Server` Permission can do that!\nBeing alone works too though!").queue();
         }
 	}
 

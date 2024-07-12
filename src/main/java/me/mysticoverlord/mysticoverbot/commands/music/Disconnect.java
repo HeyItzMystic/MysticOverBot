@@ -38,7 +38,7 @@ implements IMusic {
             audio.closeAudioConnection();
             channel.sendMessage("Successfully disconnected!").queue();
         } else {
-        	channel.sendMessage("You need a role name DJ or the ``Manage Server`` permission to use this command.\nOr simply be alone!").queue();
+        	channel.sendMessage("You need a role name DJ or the `Manage Server` permission to use this command.\nOr simply be alone!").queue();
         }
 
     }

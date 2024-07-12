@@ -47,12 +47,12 @@ public class Mute implements ICommand {
         
         
 		if (!member.hasPermission(Permission.MANAGE_ROLES)) {
-			event.getChannel().sendMessage("You don't have the required Permission to use this Command!\n``Manage Roles``").queue();
+			event.getChannel().sendMessage("You don't have the required Permission to use this Command!\n`Manage Roles`").queue();
 			return;
 		}
 		
 		if (!selfMember.hasPermission(Permission.MANAGE_ROLES)) {
-			event.getChannel().sendMessage("I am missing following permission to execute this command:\n``Manage Roles``").queue();
+			event.getChannel().sendMessage("I am missing following permission to execute this command:\n`Manage Roles`").queue();
 			return;
 		}
 		

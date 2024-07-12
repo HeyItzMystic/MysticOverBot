@@ -88,7 +88,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + " ``<Question of at least 3 words>``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + " `<Question of at least 3 words>`";
     }
 }
 

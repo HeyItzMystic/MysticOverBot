@@ -39,7 +39,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + " ``<number>``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + " `<number>`";
     }
 
     public static boolean isNumeric(String str) {

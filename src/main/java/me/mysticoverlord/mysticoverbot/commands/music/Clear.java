@@ -32,7 +32,7 @@ implements IMusic {
             event.getChannel().sendMessage("Queue Cleared!").queue();
         	
         } else {
-        	channel.sendMessage("You can't clear the queue!\nOnly people with a ``DJ`` role or ``Manage Server`` Permission can do that!\nBeing alone works too though!").queue();            
+        	channel.sendMessage("You can't clear the queue!\nOnly people with a `DJ` role or `Manage Server` Permission can do that!\nBeing alone works too though!").queue();            
         }
 
     }

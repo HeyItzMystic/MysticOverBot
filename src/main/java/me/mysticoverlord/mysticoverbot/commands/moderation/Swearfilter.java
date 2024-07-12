@@ -17,12 +17,12 @@ public class Swearfilter implements ICommand {
 		Member author = event.getMember();
 		
 		if (!author.hasPermission(Permission.ADMINISTRATOR)) {
-			event.getChannel().sendMessage("This command requires the ``Administrator`` Permission!").queue();
+			event.getChannel().sendMessage("This command requires the `Administrator` Permission!").queue();
 		return;
 		}
 		
 		if (!event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)) {
-			event.getChannel().sendMessage("I don't have the ``Manage Messages`` Permission!").queue();
+			event.getChannel().sendMessage("I don't have the `Manage Messages` Permission!").queue();
 			return;
 		}
 

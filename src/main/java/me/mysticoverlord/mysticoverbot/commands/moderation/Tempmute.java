@@ -27,7 +27,6 @@ public class Tempmute implements ICommand {
         TextChannel channel = event.getChannel();
         Member member = event.getMember();
         Member selfMember = event.getGuild().getSelfMember();
-        Role role = event.getGuild().getRolesByName("Muted", false).get(0);
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
         String reason = String.join((CharSequence)" ", args.subList(4, args.size()));       
 		
@@ -45,12 +44,12 @@ public class Tempmute implements ICommand {
         Member target = mentionedMembers.get(0);
         
 		if (!member.hasPermission(Permission.MANAGE_ROLES)) {
-			event.getChannel().sendMessage("You don't have the required Permission to use this Command!\n``Manage Roles``").queue();
+			event.getChannel().sendMessage("You don't have the required Permission to use this Command!\n`Manage Roles`").queue();
 			return;
 		}
 		
 		if (!selfMember.hasPermission(Permission.MANAGE_ROLES)) {
-			event.getChannel().sendMessage("I am missing following permission to execute this command:\n``Manage Roles``").queue();
+			event.getChannel().sendMessage("I am missing following permission to execute this command:\n`Manage Roles`").queue();
 			return;
 		}
 		
@@ -64,35 +63,43 @@ public class Tempmute implements ICommand {
 			return;
 		}
 		
-		if (!roleExists(event) == true) {
+		if (!roleExists(event)) {
 			channel.sendMessage("No \"Muted\" role available!\nTo use this command create a \"Muted\" role or use o!mutesetup to make me do it for you!").queue();
 			return;
 		}
-		
+
+        Role role = event.getGuild().getRolesByName("Muted", false).get(0);
         event.getGuild().addRoleToMember(target, role).queue();		
 		
-		
-		
-		String minutes = args.get(3).replaceFirst("m", "");		
-		String hours = args.get(2).replaceFirst("h", "");		
-		String days = args.get(1).replaceFirst("d", "");
+        String minutes;
+        String hours;
+        String days;
+        
+		try {
+		minutes = args.get(3).replaceFirst("m", "");		
+		hours = args.get(2).replaceFirst("h", "");		
+		days = args.get(1).replaceFirst("d", "");
+		} catch (Exception e) {
+			event.getChannel().sendMessage("No correct time format has been given!\n" + getUsage()).queue();
+			return;
+		}
 		
 		SQLiteUtil.getWarnings(event.getGuild().getId(), target.getId());
-		SQLiteUtil.updateMuted(event.getGuild().getId(), target.getId(), FormatUtil.dateCalculator(days, hours, minutes), event);
+		SQLiteUtil.updateMuted(event.getGuild().getId(), target.getId(), FormatUtil.dateCalculator(days, hours, minutes), event.getChannel());
 		
 		EmbedBuilder builder = EmbedUtils.getDefaultEmbed()
 				.setColor(new Color(150,150,0))
 				.setTitle("Muted " + target.getUser().getAsTag())
 				.addField("Moderator", member.getAsMention(), true)
-				.addField("Duration", Duration(days, hours, minutes), true)
+				.addField("Duration", duration(days, hours, minutes), true)
 				.addField("Reason", reason, true);
 		
-		event.getChannel().sendMessage(builder.build()).queue();
+		event.getChannel().sendMessageEmbeds(builder.build()).queue();
 
 			try {
-    			event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(builder.build()).queue();
+    			event.getGuild().getTextChannelsByName("log", true).get(0).sendMessageEmbeds(builder.build()).queue();
     			} catch (Exception e1) {
-    				event.getGuild().getTextChannelsByName("logs", true).get(0).sendMessage(builder.build()).queue();
+    				event.getGuild().getTextChannelsByName("logs", true).get(0).sendMessageEmbeds(builder.build()).queue();
     			}
 		}
 		
@@ -116,7 +123,7 @@ public class Tempmute implements ICommand {
 		return "Usage: " + Constants.PREFIX + getInvoke() + " <@user> <d# h# m#> [reason]\nReplace the \"#\" with any number!";
 	}
 	
-	private String Duration(String days, String hours, String minutes) {
+	private String duration(String days, String hours, String minutes) {
 		StringBuilder builder = new StringBuilder();
 		
 		if (!days.isBlank()) {

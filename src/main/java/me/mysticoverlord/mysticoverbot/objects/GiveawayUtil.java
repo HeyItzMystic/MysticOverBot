@@ -46,7 +46,9 @@ public class GiveawayUtil {
 		.setDescription("Winners: " + mentions.toString())
 		.setTimestamp(Instant.now())
 		.setFooter(amount.toString() + " Winners | Ended ");
-		message.editMessage(builder.build()).queue();
+		if (message.getMember().equals(channel.getGuild().getSelfMember())) {
+			message.editMessageEmbeds(builder.build()).queue();
+		}
 		SQLiteUtil.deleteGiveaway(message.getId());
 		} catch (Exception e) {
 			ExceptionHandler.handle(e);

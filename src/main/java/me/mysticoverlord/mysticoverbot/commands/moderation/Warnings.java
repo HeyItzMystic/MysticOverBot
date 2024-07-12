@@ -24,7 +24,7 @@ public class Warnings implements ICommand {
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
 	
 		if (args.isEmpty()) {
-			event.getChannel().sendMessage("Missing Arguments: ``@user`` ``action``").queue();
+			event.getChannel().sendMessage("Missing Arguments: `@user` `action`").queue();
 			event.getChannel().sendMessage("Actions include:\nshow: shows their current warnings\nset: sets their new warning count\nclear: sets their warnings back to 0").queue();
 			return;
 		} 
@@ -36,18 +36,18 @@ public class Warnings implements ICommand {
         }
 		
 		if (args.size() < 2) {
-			event.getChannel().sendMessage("Missing Arguments: ``action``").queue();
+			event.getChannel().sendMessage("Missing Arguments: `action`").queue();
 			event.getChannel().sendMessage("Actions include:\nshow: shows their current warnings\nset: sets their new warning count/nclear: sets their warnings back to 0").queue();
 			return;
 		}
 		
 		if (!member.hasPermission(Permission.MANAGE_ROLES, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)){
-			event.getChannel().sendMessage("You need following permissions to use this command:\n``Manage Roles, Kick Members, Ban Members``").queue();
+			event.getChannel().sendMessage("You need following permissions to use this command:\n`Manage Roles, Kick Members, Ban Members`").queue();
 			return;
 		}
 		
 		if (!selfmember.hasPermission(Permission.MANAGE_ROLES, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)){
-			event.getChannel().sendMessage("I need following permissions to run this command:\n``Manage Roles, Kick Members, Ban Members``").queue();
+			event.getChannel().sendMessage("I need following permissions to run this command:\n`Manage Roles, Kick Members, Ban Members`").queue();
 			return;
 		}
 		
@@ -64,7 +64,7 @@ public class Warnings implements ICommand {
             }
         	String guildId = event.getGuild().getId();
         	String userId = target.getId();
-        	SQLiteUtil.updateWarnings(guildId, userId, 0, event);
+        	SQLiteUtil.updateWarnings(guildId, userId, 0, event.getChannel());
         	event.getChannel().sendMessage("Removed all warnings from " + target.getAsMention()).queue();
         	return;
         	
@@ -86,7 +86,7 @@ public class Warnings implements ICommand {
         	try {
         	   int warnings = Integer.parseInt(args.get(2));
         	   
-        	   SQLiteUtil.updateWarnings(event.getGuild().getId(), target.getId(), warnings, event);
+        	   SQLiteUtil.updateWarnings(event.getGuild().getId(), target.getId(), warnings, event.getChannel());
         	   event.getChannel().sendMessage("Warnings for " + target.getAsMention() + " has been set to: " + warnings).queue();
         	    
         	} catch (NumberFormatException e) {
@@ -94,7 +94,7 @@ public class Warnings implements ICommand {
         		return;
         	}
         } else {
-        	event.getChannel().sendMessage("The given ``action`` argument is invalid!").queue();
+        	event.getChannel().sendMessage("The given `action` argument is invalid!").queue();
         }
         
         } catch (IndexOutOfBoundsException e) {

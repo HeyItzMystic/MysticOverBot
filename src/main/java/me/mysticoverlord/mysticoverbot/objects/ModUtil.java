@@ -9,11 +9,13 @@ import java.util.concurrent.TimeUnit;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 
 public class ModUtil {
 
@@ -24,53 +26,50 @@ public class ModUtil {
      * @param input
      * @return
      */
-	public static String warningPunishment(int warnings, GuildMessageReceivedEvent event, Member member) {	
+	public static String warningPunishment(int warnings, Guild guild, Member member, TextChannel channel) {	
 
-    	if (!roleExists(event) == true) {
+    	if (!roleExists(guild) == true) {
 			try {   			
-				event.getGuild().getTextChannelsByName("log", true).get(0).sendMessage(member.getAsMention() + " has had over 3 Automod violations!\nDue to haveing detected no Muted role no Mute Punishments are possible!").queue();			
+				guild.getTextChannelsByName("log", true).get(0).sendMessage(member.getAsMention() + " has had over 3 Automod violations!\nDue to haveing detected no Muted role no Mute Punishments are possible!").queue();			
 			} catch (IndexOutOfBoundsException e) {				
-				event.getGuild().getTextChannelsByName("logs", true).get(0).sendMessage(member.getAsMention() + " has had over 3 Automod violations!\nDue to haveing detected no Muted role no Mute Punishments are possible!").queue();			
+				guild.getTextChannelsByName("logs", true).get(0).sendMessage(member.getAsMention() + " has had over 3 Automod violations!\nDue to haveing detected no Muted role no Mute Punishments are possible!").queue();			
 			}
 			return null;
 		}
 		
-		Role role = event.getGuild().getRolesByName("Muted", true).get(0);
+		Role role = guild.getRolesByName("Muted", true).get(0);
 		
     	switch(warnings) {
     	case 3:
-    		event.getGuild().addRoleToMember(member, role).queue();
-    		SQLiteUtil.updateMuted(event.getGuild().getId(), member.getId(), FormatUtil.dateCalculator("0", "0", "30"), event);
+    		guild.addRoleToMember(member, role).queue();
+    		SQLiteUtil.updateMuted(guild.getId(), member.getId(), FormatUtil.dateCalculator("0", "0", "30"), channel);
     		return "30 Minutes";
-    	case 4: event.getGuild().addRoleToMember(member, role).queue();
-    	        SQLiteUtil.updateMuted(event.getGuild().getId(), member.getId(), FormatUtil.dateCalculator("0", "1", "0"), event);
+    	case 4: guild.addRoleToMember(member, role).queue();
+    	        SQLiteUtil.updateMuted(guild.getId(), member.getId(), FormatUtil.dateCalculator("0", "1", "0"), channel);
     	return "1 hour";
-    	case 5: event.getGuild().addRoleToMember(member, role).queue();
-    	        SQLiteUtil.updateMuted(event.getGuild().getId(), member.getId(), FormatUtil.dateCalculator("0", "6", "0"), event);
+    	case 5: guild.addRoleToMember(member, role).queue();
+    	        SQLiteUtil.updateMuted(guild.getId(), member.getId(), FormatUtil.dateCalculator("0", "6", "0"), channel);
     	return "6 hours";
-    	case 6: event.getGuild().addRoleToMember(member, role).queue();
-    			SQLiteUtil.updateMuted(event.getGuild().getId(), member.getId(), FormatUtil.dateCalculator("1", "0", "0"), event);
+    	case 6: guild.addRoleToMember(member, role).queue();
+    			SQLiteUtil.updateMuted(guild.getId(), member.getId(), FormatUtil.dateCalculator("1", "0", "0"), channel);
     	return "1 day";
-    	case 7: event.getGuild().addRoleToMember(member, role).queue();
-				SQLiteUtil.updateMuted(event.getGuild().getId(), member.getId(), FormatUtil.dateCalculator("7", "0", "0"), event);
+    	case 7: guild.addRoleToMember(member, role).queue();
+				SQLiteUtil.updateMuted(guild.getId(), member.getId(), FormatUtil.dateCalculator("7", "0", "0"), channel);
 				return "7 days";
-    	case 8: event.getGuild().addRoleToMember(member, role).queue();
-				SQLiteUtil.updateMuted(event.getGuild().getId(), member.getId(), FormatUtil.dateCalculator("30", "0", "0"), event);
+    	case 8: guild.addRoleToMember(member, role).queue();
+				SQLiteUtil.updateMuted(guild.getId(), member.getId(), FormatUtil.dateCalculator("30", "0", "0"), channel);
 				return "30 days";
-    	case 9: member.kick("Automod: 9th Warning").queue();
-    	        return "Kicked";
-    	case 10: member.ban(0, "Automod: 10th Warning").queue();
-    	SQLiteUtil.deleteUserFromModeration(member.getId(), event.getGuild().getId());
-    	         return "Banned";
     	default:
     		return null;
 
     	}
     }
 	
-    public static boolean roleExists(GuildMessageReceivedEvent event) {
+	
+	
+    public static boolean roleExists(Guild guild) {
 		try {
-			event.getGuild().getRolesByName("Muted", true).get(0);
+			guild.getRolesByName("Muted", true).get(0);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -113,30 +112,22 @@ public class ModUtil {
 	
     public static void doWarn(GuildMessageReceivedEvent event, String reason) {
     	int warnings = 1 + SQLiteUtil.getWarnings(event.getGuild().getId(), event.getAuthor().getId());
-        SQLiteUtil.updateWarnings(event.getGuild().getId(), event.getAuthor().getId() , warnings, event);
-		String punishment =  ModUtil.warningPunishment(warnings, event, event.getMember());
+        SQLiteUtil.updateWarnings(event.getGuild().getId(), event.getAuthor().getId() , warnings, event.getChannel());
+		String punishment =  ModUtil.warningPunishment(warnings, event.getGuild(), event.getMember(), event.getChannel());
 		if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)) {
 			event.getMessage().delete().queue();
 		}
 		EmbedBuilder builder = EmbedUtils.getDefaultEmbed()
 				.addField("User", event.getAuthor().getAsMention(), true)
-				.addField("Moderator", event.getJDA().getSelfUser().getAsMention(), true);
+				.addField("Moderator", event.getJDA().getSelfUser().getAsMention(), true)
+				.setTitle((warnings >= 10 ? "Banned" : warnings == 9 ? "Kicked" : warnings > 3 ? "Muted" : "Warned") + " " + event.getAuthor().getAsTag())
+				.setColor((warnings >= 10 ? DARK_RED : warnings == 9 ? RED : warnings > 3 ? DARK_YELLOW : YELLOW))
+				.addField("Reason", reason, true);
 		
-		if (warnings < 3) {
-			builder.setTitle("Warned " + event.getAuthor().getAsTag())
-			.setColor(YELLOW).addField("Reason", reason, true);
-		} else if (warnings < 9) {
-			builder.setTitle("Muted " + event.getAuthor().getAsTag())
-			.setColor(DARK_YELLOW).addField("Reason", reason, true )
-			.addField("Duration", punishment , true);
-		} else if (warnings == 9) {
-			builder.setTitle("Kicked " + event.getAuthor().getAsTag())
-			.setColor(RED).addField("Reason", reason + " (9th Violation)", true);
-		} else if (warnings >= 10) {
-			builder.setTitle("Banned " + event.getAuthor().getAsTag())
-			.setColor(DARK_RED).addField("Reason", reason + " (" + warnings + "th Violation)", true);
+		if(warnings > 2 && warnings < 9) {
+			builder.addField("Duration", punishment , true);
 		}
-		
+			
 		builder.addField("Current Warnings", String.valueOf(warnings), true)
 		.addField("Message", event.getMessage().getContentDisplay(), true)
 		.addField("In channel", event.getChannel().getAsMention(), true);
@@ -144,7 +135,7 @@ public class ModUtil {
 		try { 
 	    	TextChannel channel = event.getGuild().getTextChannelsByName("log", true).get(0);
 	    	if (channel != null && event.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE)) {
-	    		channel.sendMessage(builder.build()).timeout(10, TimeUnit.MILLISECONDS).queue();
+	    		channel.sendMessageEmbeds(builder.build()).timeout(10, TimeUnit.MILLISECONDS).queue();
 	    	}
 		} catch (IndexOutOfBoundsException e) {
 		}
@@ -152,38 +143,72 @@ public class ModUtil {
     		return;
     	}
 		builder.clear()
-		.setAuthor(event.getAuthor().getAsTag(), event.getAuthor().getEffectiveAvatarUrl(), event.getAuthor().getEffectiveAvatarUrl());
-
-
-		if (warnings < 3) {
-			
-			builder.setTitle("Warned " + event.getAuthor().getAsTag())
-			.setColor(YELLOW).setDescription(event.getAuthor().getAsMention() + " has been warned!\n\n**Reason:** " + reason)
-			.addField("Current Warnings", String.valueOf(warnings), true);
-			
-		} else if (warnings < 9) {
-			
-			builder.setTitle("Muted " + event.getAuthor().getAsTag())
-			.setColor(DARK_YELLOW).setDescription(event.getAuthor().getAsMention() + " has been muted!\n\n**Reason:** " + reason)
-			.addField("Current Warnings", String.valueOf(warnings), true)
-			.addField("Duration", punishment , true);
+		.setAuthor(event.getAuthor().getAsTag(), event.getAuthor().getEffectiveAvatarUrl(), event.getAuthor().getEffectiveAvatarUrl())
+		.setTitle((warnings >= 10 ? "Banned" : warnings == 9 ? "Kicked" : warnings > 3 ? "Muted" : "Warned") + " " + event.getAuthor().getAsTag())
+		.setColor((warnings >= 10 ? DARK_RED : warnings == 9 ? RED : warnings > 3 ? DARK_YELLOW : YELLOW))
+		.setDescription(event.getAuthor().getAsMention() + " has been "+ 
+		(warnings >= 10 ? "banned" : warnings == 9 ? "kicked" : warnings > 3 ? "muted" : "warned") 
+		+ "!\n\n**Reason:** " + reason);
 		
-		} else if (warnings == 9) {
-			
-			builder.setTitle("Kicked " + event.getAuthor().getAsTag())
-			.setColor(RED).
-			setDescription(event.getAuthor().getAsMention() + " has been kicked!\n\n**Reason:** " + reason + " (9th Violation)")
-			.addField("Current Warnings", String.valueOf(warnings), true);
-			
-		} else if (warnings >= 10) {
-			
-			builder.setTitle("Banned " + event.getAuthor().getAsTag())
-			.setColor(DARK_RED).setDescription(event.getAuthor().getAsMention() + " has been warned!\n\n**Reason:** " + reason + " (" + warnings + "th Violation)")
-			.addField("Current Warnings", String.valueOf(warnings), true);
-	
+		if(warnings > 2 && warnings < 9) {
+			builder.addField("Duration", punishment , true);
 		}
 		
-		event.getChannel().sendMessage(builder.build()).queue();
+		builder.addField("Current Warnings", String.valueOf(warnings), true);
+
+		event.getChannel().sendMessageEmbeds(builder.build()).queue();
+		return;
+	}
+
+    
+    public static void doWarn(GuildMessageUpdateEvent event, String reason, String newmessage, String oldMessage) {
+    	int warnings = 1 + SQLiteUtil.getWarnings(event.getGuild().getId(), event.getAuthor().getId());
+        SQLiteUtil.updateWarnings(event.getGuild().getId(), event.getAuthor().getId() , warnings, event.getChannel());
+		String punishment =  warningPunishment(warnings, event.getGuild(), event.getMember(), event.getChannel());
+		if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+			event.getMessage().delete().queue();
+		}
+		EmbedBuilder builder = EmbedUtils.getDefaultEmbed()
+				.addField("User", event.getAuthor().getAsMention(), true)
+				.addField("Moderator", event.getJDA().getSelfUser().getAsMention(), true)
+				.setTitle((warnings >= 10 ? "Banned" : warnings == 9 ? "Kicked" : warnings > 3 ? "Muted" : "Warned") + " " + event.getAuthor().getAsTag())
+				.setColor((warnings >= 10 ? DARK_RED : warnings == 9 ? RED : warnings > 3 ? DARK_YELLOW : YELLOW))
+				.addField("Reason", reason, true);
+		
+		if(warnings > 2 && warnings < 9) {
+			builder.addField("Duration", punishment , true);
+		}
+			
+		builder.addField("Current Warnings", String.valueOf(warnings), true)
+			.addField("Previous Message", oldMessage , true)
+			.addField("New Message", newmessage, true)
+			.addField("In channel", event.getChannel().getAsMention(), true);
+		
+		try { 
+	    	TextChannel channel = event.getGuild().getTextChannelsByName("log", true).get(0);
+	    	if (channel != null && event.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE)) {
+	    		channel.sendMessageEmbeds(builder.build()).timeout(10, TimeUnit.MILLISECONDS).queue();
+	    	}
+		} catch (IndexOutOfBoundsException e) {
+		}
+    	if (!event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_WRITE)) {
+    		return;
+    	}
+		builder.clear()
+		.setAuthor(event.getAuthor().getAsTag(), event.getAuthor().getEffectiveAvatarUrl(), event.getAuthor().getEffectiveAvatarUrl())
+		.setTitle((warnings >= 10 ? "Banned" : warnings == 9 ? "Kicked" : warnings > 3 ? "Muted" : "Warned") + " " + event.getAuthor().getAsTag())
+		.setColor((warnings >= 10 ? DARK_RED : warnings == 9 ? RED : warnings > 3 ? DARK_YELLOW : YELLOW))
+		.setDescription(event.getAuthor().getAsMention() + " has been "+ 
+		(warnings >= 10 ? "banned" : warnings == 9 ? "kicked" : warnings > 3 ? "muted" : "warned") 
+		+ "!\n\n**Reason:** " + reason);
+		
+		if(warnings > 2 && warnings < 9) {
+			builder.addField("Duration", punishment , true);
+		}
+		
+		builder.addField("Current Warnings", String.valueOf(warnings), true);
+
+		event.getChannel().sendMessageEmbeds(builder.build()).queue();
 		return;
 	}
 

@@ -43,7 +43,7 @@ implements ICommand {
             return;
         }
         if (!member.hasPermission(Permission.KICK_MEMBERS)) {
-            channel.sendMessage("You don't have the required Permission to use this Command!\n``kick members``").queue();
+            channel.sendMessage("You don't have the required Permission to use this Command!\n`kick members`").queue();
             return;
         }
         if (!member.canInteract(target)) {
@@ -76,7 +76,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + "``<@User#0001/UserID>``  ``<reason>``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + "`<@User#0001/UserID>`  `<reason>`";
     }
 }
 

@@ -50,12 +50,12 @@ public class Warn implements ICommand {
          
 		
 		if (!member.hasPermission(Permission.MANAGE_ROLES, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)){
-			channel.sendMessage("You need following permissions to use this command:\n``Manage Roles, Kick Members, Ban Members``").queue();
+			channel.sendMessage("You need following permissions to use this command:\n`Manage Roles, Kick Members, Ban Members`").queue();
 			return;
 		}
 		
 		if (!selfmember.hasPermission(Permission.MANAGE_ROLES, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)){
-			channel.sendMessage("I need following permissions to run this command:\n``Manage Roles, Kick Members, Ban Members``").queue();
+			channel.sendMessage("I need following permissions to run this command:\n`Manage Roles, Kick Members, Ban Members`").queue();
 			return;
 		}
         
@@ -70,8 +70,8 @@ public class Warn implements ICommand {
         }
 		
 		int warnings = 1 + SQLiteUtil.getWarnings(event.getGuild().getId(), target.getId());
-        SQLiteUtil.updateWarnings(event.getGuild().getId(), target.getId() , warnings, event);
-		String punishment =  ModUtil.warningPunishment(warnings, event, target);
+        SQLiteUtil.updateWarnings(event.getGuild().getId(), target.getId() , warnings, event.getChannel());
+		String punishment =  ModUtil.warningPunishment(warnings, event.getGuild(), target, event.getChannel());
 		
 		EmbedBuilder builder = EmbedUtils.getDefaultEmbed()
 				.addField("User", target.getAsMention(), true)

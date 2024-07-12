@@ -3,8 +3,9 @@ pom/
 .xml/
 out/
 .env
-database.db
+*.db
 botconfig.json
 banned.json
 *.class
 *.bak
+*.txt

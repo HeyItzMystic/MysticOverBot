@@ -24,16 +24,16 @@ public class Open implements ICommand {
 		ArrayList<Role> roles = new ArrayList<Role>();
 		try {
 		if (!member.hasPermission(Permission.ADMINISTRATOR)) {
-			event.getChannel().sendMessage("You don't have the required permission: ``Administrator``").queue();
+			event.getChannel().sendMessage("You don't have the required permission: `Administrator`").queue();
 			return;
 		}
 		} catch (Exception e) {
-			event.getChannel().sendMessage("Failed to check for the permission: ``Administrator``\nIf this problem continues please contact the Owner!").queue();
+			event.getChannel().sendMessage("Failed to check for the permission: `Administrator`\nIf this problem continues please contact the Owner!").queue();
 			return;
 		}
 		
 		if (event.getGuild().getSelfMember().hasPermission(Permission.ADMINISTRATOR)) {
-			event.getChannel().sendMessage("I don't have the required permission: ``Administrator``").queue();
+			event.getChannel().sendMessage("I don't have the required permission: `Administrator`").queue();
 		}
 
 		event.getGuild().getRoles().forEach((role) -> {
@@ -82,7 +82,7 @@ public class Open implements ICommand {
 				
 					} catch (Exception e) {
 						e.printStackTrace();
-						event.getChannel().sendMessage("Something went wrong while opening the server!\nPlease check if i have all needed permissions and try again!\n``Administrator``").queue();
+						event.getChannel().sendMessage("Something went wrong while opening the server!\nPlease check if i have all needed permissions and try again!\n`Administrator`").queue();
 					}
 			}
 		});

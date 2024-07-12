@@ -38,7 +38,7 @@ public class Start implements ICommand{
 		}
 		
 		if (!event.getGuild().getSelfMember().hasPermission(selectedChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ, Permission.MESSAGE_HISTORY)) {
-			event.getChannel().sendMessage("I need following permissions to be able to manage a giveaway in this channel: ``Send Messages, View Channel, Read Message History``").queue();
+			event.getChannel().sendMessage("I need following permissions to be able to manage a giveaway in this channel: `Send Messages, View Channel, Read Message History`").queue();
 			return;
 		}
 		

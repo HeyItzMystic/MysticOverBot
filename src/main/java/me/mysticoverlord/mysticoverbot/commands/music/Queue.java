@@ -33,8 +33,7 @@ implements IMusic {
       
        
         AudioPlayer player = musicManager.player;
-        AudioTrackInfo in = player.getPlayingTrack().getInfo();
-        if (queue.isEmpty()) {
+        if (queue.isEmpty()  || queue.size() <= 0) {
             channel.sendMessage("The queue is empty!").queue();
             return;
         }
@@ -53,7 +52,6 @@ implements IMusic {
         int trackCount = queue.size();
         String string = "";
         ArrayList<AudioTrack> tracks = new ArrayList<AudioTrack>(queue);
-        String author;
         EmbedBuilder builder = EmbedUtils.getDefaultEmbed()
         		.setTitle("Queue")
         		.setFooter("Page: " + page + ", Total: " + queue.size(), event.getAuthor().getEffectiveAvatarUrl());
@@ -68,18 +66,26 @@ implements IMusic {
             	user = "Not registered!";
             }
             try {
-            string = String.format("``%s`` - Requested By: %s\n", FormatUtil.formatTime(info.length), event.getJDA().getUserById(user).getAsMention());
+            string = String.format("`%s` - Requested By: %s\n", FormatUtil.formatTime(info.length), event.getJDA().getUserById(user).getAsMention());
             } catch (NumberFormatException e) {
-            	string = String.format("``%s`` - Requested By: %s\n", FormatUtil.formatTime(info.length), user);
+            	string = String.format("`%s` - Requested By: %s\n", FormatUtil.formatTime(info.length), user);
             }
             builder.addField(String.valueOf(i + 1) + ". " + track.getInfo().title, string, false);
         }
+        AudioTrackInfo in;
+        String author;
         try {
-        author = event.getGuild().getMemberById((String)player.getPlayingTrack().getUserData()).getAsMention();
-        } catch (Exception e) {
-        	author = player.getPlayingTrack().getUserData().toString();
+        	in = player.getPlayingTrack().getInfo();
+        	 try {
+        	     author = event.getGuild().getMemberById((String)player.getPlayingTrack().getUserData()).getAsMention();
+        	 } catch (Exception e) {
+        	    author = player.getPlayingTrack().getUserData().toString();
+        	 }
+        	 builder.addField("**Now Playing**", String.valueOf(in.title) + "\n`" + FormatUtil.formatTime(in.length) + "` - Requested by: " + author, false);
+        } catch (NullPointerException e) {
+        	
         }
-        builder.addField("**Now Playing**", String.valueOf(in.title) + "\n``" + FormatUtil.formatTime(in.length) + "`` - Requested by: " + author, false);
+      
         channel.sendMessage(builder.build()).queue();
     }
 

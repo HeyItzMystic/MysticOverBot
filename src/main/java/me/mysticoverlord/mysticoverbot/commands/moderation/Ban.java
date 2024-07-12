@@ -82,7 +82,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + "``<@User#0001>``  ``<reason>``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + "`<@User#0001>`  `<reason>`";
     }
 }
 

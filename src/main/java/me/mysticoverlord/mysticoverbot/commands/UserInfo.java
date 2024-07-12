@@ -65,7 +65,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + " ``<user>``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + " `<user>`";
     }
 }
 

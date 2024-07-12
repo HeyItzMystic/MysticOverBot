@@ -34,7 +34,7 @@ implements IMusic {
         VoiceChannel vc = voicestate.getChannel();
         Member selfMember = event.getGuild().getSelfMember();
         if (!selfMember.hasPermission((GuildChannel)vc, Permission.VOICE_CONNECT)) {
-            channel.sendMessage("I'm missing the permission ``Voice Connect``!").queue();
+            channel.sendMessage("I'm missing the permission `Voice Connect`!").queue();
             return;
         }
         audio.openAudioConnection(vc);

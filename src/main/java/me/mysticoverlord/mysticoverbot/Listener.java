@@ -62,14 +62,15 @@ extends ListenerAdapter {
      }
 		
         logger.info(String.format("Logged in as %#s\n", event.getJDA().getSelfUser()));
-       new Thread(new GiveawayManager(event.getJDA()), "GiveawayManager").start();
+        event.getJDA().getPresence().setActivity(Activity.playing("Preparing for relaunch"));
+ /*      new Thread(new GiveawayManager(event.getJDA()), "GiveawayManager").start();
         
         Timer timer = new Timer();
         timer.schedule(new TimerTask(){
 
             @Override
             public void run() {
-                event.getJDA().getPresence().setActivity(Activity.watching(event.getJDA().getGuilds().size() + " Servers | o!help"));
+               event.getJDA().getPresence().setActivity(Activity.watching(event.getJDA().getGuilds().size() + " Servers | o!help"));
                 Constants.api.setStats(event.getJDA().getGuilds().size());
                 try {
                     TimeUnit.SECONDS.sleep(30L);
@@ -81,10 +82,11 @@ extends ListenerAdapter {
                 Constants.api.setStats(event.getJDA().getGuilds().size());
             }
         }, 0L, 60000L);
-        this.gthread.start();
+        this.gthread.start(); */
     }
 
-    @Override
+	
+	@Override
     public void onGuildJoin(GuildJoinEvent event) throws NullPointerException{
             EmbedBuilder builder = EmbedUtils.getDefaultEmbed()
             		.setThumbnail(event.getJDA().getSelfUser()
@@ -99,16 +101,16 @@ extends ListenerAdapter {
             		.setFooter("Enjoy the Commands!", null);
             
             if (event.getGuild().getSystemChannel() != null && event.getGuild().getSystemChannel().canTalk()) {
-                event.getGuild().getSystemChannel().sendMessage(builder.build()).queue();
+                event.getGuild().getSystemChannel().sendMessageEmbeds(builder.build()).queue();
                 return;
             } else if (event.getGuild().getDefaultChannel() != null && event.getGuild().getDefaultChannel().canTalk()){
-                event.getGuild().getDefaultChannel().sendMessage(builder.build()).queue();
+                event.getGuild().getDefaultChannel().sendMessageEmbeds(builder.build()).queue();
                 return;
             } else {
             	int x = 0;
             	while (x <= event.getGuild().getTextChannels().size()) {
             		if (event.getGuild().getTextChannels().get(x).canTalk()) {
-                		event.getGuild().getTextChannels().get(x).sendMessage(builder.build()).queue();
+                		event.getGuild().getTextChannels().get(x).sendMessageEmbeds(builder.build()).queue();
             			break;
             	}
             		x += 1;
@@ -118,7 +120,6 @@ extends ListenerAdapter {
             
 
     }
-    
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event)  {	
@@ -136,7 +137,7 @@ extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-    	if (event.getAuthor().isBot()) {
+    	if (event.getAuthor().isBot() || !event.getChannel().canTalk()) {
     		return;
     	}
     	
@@ -151,11 +152,11 @@ extends ListenerAdapter {
     
         String id = event.getGuild().getId();
 
-       Constants.PREFIX = SQLiteUtil.getPrefix(id);
+       String prefix = SQLiteUtil.getPrefix(id);
         
-        if (!event.getMessage().isWebhookMessage() && (raw.startsWith(Constants.PREFIX) || raw.toLowerCase().startsWith("o!"))) {
+        if (!event.getMessage().isWebhookMessage() && (raw.toLowerCase().startsWith(prefix.toLowerCase()))) {
         	if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_WRITE)) {
-                this.manager.handleCommand(event);
+                this.manager.handleCommand(event, prefix);
         	}
         }
     }
@@ -208,10 +209,10 @@ extends ListenerAdapter {
 	@SuppressWarnings("deprecation")
 	private void shutdown(JDA jda) {
 		this.gmanager.shutdownManager();
-	    jda.shutdown();
 	    if (this.gthread.isAlive()) {
-	    		    this.gthread.stop();
+		    this.gthread.stop();
 	    }
+	    jda.shutdown();
 
 	   System.exit(0);
 	}

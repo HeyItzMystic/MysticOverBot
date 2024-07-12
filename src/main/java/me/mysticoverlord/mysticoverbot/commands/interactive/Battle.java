@@ -348,7 +348,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + " ``[@user1] [@user2]``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + " `[@user1] [@user2]`";
     }
     
 }

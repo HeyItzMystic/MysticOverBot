@@ -97,8 +97,15 @@ public class GiveawayManager implements Runnable{
   			String[] Ids = entry.getKey().split("-");
   			Instant instant = Instant.ofEpochMilli(entry.getValue());
     		if (instant.isBefore(Instant.now())) {
-    			TextChannel channel = jda.getTextChannelById(Ids[0]);
-    			Message message = channel.retrieveMessageById(Ids[1]).complete();
+    			TextChannel channel;
+    			Message message;
+    			try {
+    			channel = jda.getTextChannelById(Ids[0]);
+    			message = channel.retrieveMessageById(Ids[1]).complete();
+    			} catch (Exception e) {
+    				SQLiteUtil.deleteGiveaway(Ids[1]);
+    				continue;
+    			}
     			GiveawayUtil.endGiveaway(channel, message);
     		} else {
     			updateTime(Ids, instant);
@@ -128,7 +135,7 @@ public class GiveawayManager implements Runnable{
 			builder.setColor(Main.PURPLE);
 		}
 		builder.setDescription("React with :gift: to Enter!\n\nTime Remaining: " + time);
-		message.editMessage(builder.build()).queue();
+		message.editMessageEmbeds(builder.build()).queue();
 		} catch (Exception e) {
 			ExceptionHandler.handle(e);
 		}

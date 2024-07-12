@@ -66,7 +66,7 @@ implements ICommand {
 
     @Override
     public String getUsage() {
-        return "Usage: " + Constants.PREFIX + this.getInvoke() + " ``<User#0001/User Id>``";
+        return "Usage: " + Constants.PREFIX + this.getInvoke() + " `<User#0001/User Id>`";
     }
 
     private boolean isCorrectUser(Guild.Ban ban, String arg) {
