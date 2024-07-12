@@ -11,13 +11,15 @@ import org.discordbots.api.client.DiscordBotListAPI;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 public class Constants {
-	public static final String path = "/home/pi/Bot/";
-	public static final String configpath = path + "botconfig.json";
-	public static final String databasepath = path + "dbencrypted.db";
+	public static final String testPath = "";
+	public static final String homePath = "/home/pi/Bot/";
+	public static final String path = testPath;
+	public static final String configpath =  "botconfig.json";
+	public static final String databasepath = "dbencrypted.db";
 	public static final Map<Long, Map<Long, Boolean>> votes = new HashMap<Long, Map<Long, Boolean>>();
 	public static final Map<Long, Boolean> loop = new HashMap<Long, Boolean>();
 	public static final Map<Long, Boolean> loopqueue = new HashMap<Long, Boolean>();
-	public static String VERSION = "V.2.3.3";
+	public static String VERSION = "V.2.4.0";
     public static final long OWNER = 394066807926947850L;
     public static TextChannel channel;
     public static String PREFIX = "o!";

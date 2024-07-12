@@ -135,7 +135,7 @@ public class GiveawayManager implements Runnable{
 			builder.setColor(Main.PURPLE);
 		}
 		builder.setDescription("React with :gift: to Enter!\n\nTime Remaining: " + time);
-		message.editMessage(builder.build()).queue();
+		message.editMessageEmbeds(builder.build()).queue();
 		} catch (Exception e) {
 			ExceptionHandler.handle(e);
 		}

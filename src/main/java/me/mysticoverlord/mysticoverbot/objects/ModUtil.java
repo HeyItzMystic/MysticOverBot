@@ -156,7 +156,7 @@ public class ModUtil {
 		
 		builder.addField("Current Warnings", String.valueOf(warnings), true);
 
-		event.getChannel().sendMessage(builder.build()).queue();
+		event.getChannel().sendMessageEmbeds(builder.build()).queue();
 		return;
 	}
 
@@ -187,7 +187,7 @@ public class ModUtil {
 		try { 
 	    	TextChannel channel = event.getGuild().getTextChannelsByName("log", true).get(0);
 	    	if (channel != null && event.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE)) {
-	    		channel.sendMessage(builder.build()).timeout(10, TimeUnit.MILLISECONDS).queue();
+	    		channel.sendMessageEmbeds(builder.build()).timeout(10, TimeUnit.MILLISECONDS).queue();
 	    	}
 		} catch (IndexOutOfBoundsException e) {
 		}
@@ -208,7 +208,7 @@ public class ModUtil {
 		
 		builder.addField("Current Warnings", String.valueOf(warnings), true);
 
-		event.getChannel().sendMessage(builder.build()).queue();
+		event.getChannel().sendMessageEmbeds(builder.build()).queue();
 		return;
 	}
 

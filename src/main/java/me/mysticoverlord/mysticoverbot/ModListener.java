@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
@@ -32,6 +33,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 
 
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class ModListener extends ListenerAdapter{
@@ -56,13 +58,9 @@ public class ModListener extends ListenerAdapter{
 	        	
 	            @Override
 	            public void run() {
-	            	String pattern = "yyyy-MM-dd-HH-mm";
-	            	SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-	            	String date = simpleDateFormat.format(new Date());
-	            	
 	            	ArrayList<String> entries;
 	            	try {
-	            	entries = SQLiteUtil.getMutes(date);
+	            	entries = SQLiteUtil.getMutes(Instant.now().getEpochSecond());
 	            	if (!entries.isEmpty() && entries != null) {
 	            		
 	            		for (int x = 0; x < entries.size(); x++) {
@@ -71,13 +69,12 @@ public class ModListener extends ListenerAdapter{
 	    	            	
 		            		String userId = string.substring(0, index);
 		            		String guildId = string.substring(index + 1);
-		            		
-		            		String sentence = SQLiteUtil.getMuteFromUser(guildId, userId);
-		            		
-		            		if (sentence != null && sentence.equals(date)) {
-		            			SQLiteUtil.clearMuted(guildId, userId);
-		            			event.getJDA().getGuildById(guildId).removeRoleFromMember(userId, event.getJDA().getGuildById(guildId).getRolesByName("Muted", true).get(0)).queue();
-		            			}
+		            
+		            		SQLiteUtil.clearMuted(guildId, userId);
+		            		event.getJDA().getGuildById(guildId)
+		            		.removeRoleFromMember(userId, event.getJDA()
+		            				.getGuildById(guildId)
+		            				.getRolesByName("Muted", true).get(0)).queue();
 	            		}    	
 	            	}
 	            	} catch (NullPointerException e) {
@@ -102,7 +99,6 @@ public class ModListener extends ListenerAdapter{
 				}
 	        }, 0, 86400000);
 
-			releasePreviousMutes(event);
 		
 	}
 	
@@ -244,6 +240,31 @@ public class ModListener extends ListenerAdapter{
                 			}
                 		}
     }
+	
+	public void onUserUpdateName(UserUpdateNameEvent event) {
+		event.getUser().getMutualGuilds().forEach((guild) -> {
+			String id = guild.getId();
+			
+			Boolean bool = SQLiteUtil.getBoolean(id, "nicklog");
+	                        if (bool == true) {
+	                        
+	                        EmbedBuilder builder = EmbedUtils.getDefaultEmbed()
+	                        		.setColor(GREEN)
+	            					.setTitle("Username Change");
+	                        	builder.addField("Old Username", event.getOldName(), true);
+	                        
+	                        	builder.addField("New Username", event.getNewName().toString(), true);	
+	            					builder.addField("Member ID + Mention", event.getUser().getId() + "(" + event.getUser().getAsMention() + ")", false);
+	                        
+
+	               			try {
+	                			guild.getTextChannelsByName("log", true).get(0).sendMessageEmbeds(builder.build()).queue();
+	                			} catch (Exception e1) {
+	                			}
+	                		}
+		});
+	
+    }
 
 	
 	public void Antiinvite(GuildMessageReceivedEvent event) {
@@ -296,7 +317,7 @@ public class ModListener extends ListenerAdapter{
     }
    
          
-    private void releasePreviousMutes(ReadyEvent event) {    	
+   /* private void releasePreviousMutes(ReadyEvent event) {    	
     	try {
         	ArrayList<String> entries = new ArrayList<String>();
     		try (Connection con = SQLiteDataSource.getConnection();final PreparedStatement preparedStatement = SQLiteDataSource.getConnection()
@@ -348,7 +369,7 @@ public class ModListener extends ListenerAdapter{
     	}
 		
     }
-
+*/
 
     
 }

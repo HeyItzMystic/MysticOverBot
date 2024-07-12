@@ -62,14 +62,15 @@ extends ListenerAdapter {
      }
 		
         logger.info(String.format("Logged in as %#s\n", event.getJDA().getSelfUser()));
-       new Thread(new GiveawayManager(event.getJDA()), "GiveawayManager").start();
+        event.getJDA().getPresence().setActivity(Activity.playing("Preparing for relaunch"));
+ /*      new Thread(new GiveawayManager(event.getJDA()), "GiveawayManager").start();
         
         Timer timer = new Timer();
         timer.schedule(new TimerTask(){
 
             @Override
             public void run() {
-                event.getJDA().getPresence().setActivity(Activity.watching(event.getJDA().getGuilds().size() + " Servers | o!help"));
+               event.getJDA().getPresence().setActivity(Activity.watching(event.getJDA().getGuilds().size() + " Servers | o!help"));
                 Constants.api.setStats(event.getJDA().getGuilds().size());
                 try {
                     TimeUnit.SECONDS.sleep(30L);
@@ -81,7 +82,7 @@ extends ListenerAdapter {
                 Constants.api.setStats(event.getJDA().getGuilds().size());
             }
         }, 0L, 60000L);
-        this.gthread.start();
+        this.gthread.start(); */
     }
 
 	
@@ -119,7 +120,6 @@ extends ListenerAdapter {
             
 
     }
-    
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event)  {	

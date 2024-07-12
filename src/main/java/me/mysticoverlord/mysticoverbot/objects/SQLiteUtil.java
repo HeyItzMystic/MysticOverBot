@@ -25,7 +25,7 @@ public class SQLiteUtil {
                 // language=SQLite
                 .prepareStatement("SELECT "+ setting + " FROM guild_settings WHERE guild_id = ?")) {
     		
-    		preparedStatement.setString(1, encryption.encrypt(guildId));
+    		preparedStatement.setString(1, guildId);
     		
     		try (final ResultSet resultSet = preparedStatement.executeQuery()) {
     			if (resultSet.next()) {
@@ -46,7 +46,7 @@ public class SQLiteUtil {
                 // language=SQLite
                 .prepareStatement("UPDATE guild_settings SET "+ setting + " = ? WHERE guild_id = ?")) {
     		preparedStatement.setBoolean(1, bool);
-    		preparedStatement.setString(2, encryption.encrypt(guildId));
+    		preparedStatement.setString(2, guildId);
     		
     		preparedStatement.executeUpdate();
     		
@@ -63,8 +63,8 @@ public class SQLiteUtil {
                 // language=SQLite
                 .prepareStatement("UPDATE moderation SET warnings = ? WHERE guild_id = ? AND user_Id = ?")) {
     		preparedStatement.setInt(1, num);
-    		preparedStatement.setString(2, encryption.encrypt(guildId));
-    		preparedStatement.setString(3, encryption.encrypt(userId));
+    		preparedStatement.setString(2, guildId);
+    		preparedStatement.setString(3, userId);
     		
     		preparedStatement.executeUpdate();
     		
@@ -80,8 +80,8 @@ public class SQLiteUtil {
                 // language=SQLite
                 .prepareStatement("SELECT warnings FROM moderation WHERE guild_id = ? AND user_id = ?")) {
     		
-    		preparedStatement.setString(1, encryption.encrypt(guildId));
-    		preparedStatement.setString(2, encryption.encrypt(userId));
+    		preparedStatement.setString(1, guildId);
+    		preparedStatement.setString(2, userId);
     		
     		try (final ResultSet resultSet = preparedStatement.executeQuery()) {
     			if (resultSet.next()) {
@@ -94,8 +94,8 @@ public class SQLiteUtil {
                     // language=SQLite
                     .prepareStatement("INSERT INTO moderation(guild_id,user_id) VALUES(?,?)")) {
     			
-    			insertStatement.setString(1, encryption.encrypt(guildId));
-    			insertStatement.setString(2, encryption.encrypt(userId));
+    			insertStatement.setString(1, guildId);
+    			insertStatement.setString(2, userId);
     			
     			insertStatement.execute();
     			
@@ -108,13 +108,13 @@ public class SQLiteUtil {
     	return 0;
     }
     
-    public static String getMuteFromUser(String guildId, String userId) {
+   public static String getMuteFromUser(String guildId, String userId) {
    	try (Connection con = SQLiteDataSource.getConnection();final PreparedStatement preparedStatement = con
                 // language=SQLite
                 .prepareStatement("SELECT mutedate FROM moderation WHERE guild_id = ? AND user_id = ?")) {
     		
-    		preparedStatement.setString(1, encryption.encrypt(guildId));
-    		preparedStatement.setString(2, encryption.encrypt(userId));
+    		preparedStatement.setString(1, guildId);
+    		preparedStatement.setString(2, userId);
     		
     		try (final ResultSet resultSet = preparedStatement.executeQuery()) {
     			if (resultSet.next()) {
@@ -127,21 +127,21 @@ public class SQLiteUtil {
 			ExceptionHandler.handle(e);
     	}
     	return null;
-    }
+    } 
     
     
-    public static ArrayList<String> getMutes(String date) {
+    public static ArrayList<String> getMutes(Long epoch) {
     	try (Connection con = SQLiteDataSource.getConnection();final PreparedStatement preparedStatement = con
                 // language=SQLite
-                .prepareStatement("SELECT guild_id, user_id FROM moderation WHERE mutedate == ?")) {
+                .prepareStatement("SELECT guild_id, user_id FROM moderation WHERE mutedate <= ?")) {
 
-    		preparedStatement.setString(1, date);
-    		
+    		preparedStatement.setLong(1, epoch);
+    		//TODO convert to epoch
     		try (final ResultSet resultSet = preparedStatement.executeQuery()) {
 			    ArrayList<String> entries = new ArrayList<String>();
 			    while (resultSet.next()) {
-        				String user =  encryption.decrypt(resultSet.getString("user_id"));
-        				String guild =  encryption.decrypt(resultSet.getString("guild_id"));
+        				String user =  resultSet.getString("user_id");
+        				String guild =  resultSet.getString("guild_id");
         			
         				entries.add(user + "-" + guild);
     				
@@ -160,8 +160,8 @@ public class SQLiteUtil {
                 // language=SQLite
                 .prepareStatement("UPDATE moderation SET mutedate = ? WHERE guild_id = ? AND user_Id = ?")) {
     		preparedStatement.setString(1, date);
-    		preparedStatement.setString(2,  encryption.encrypt(guildId));
-    		preparedStatement.setString(3,  encryption.encrypt(userId));
+    		preparedStatement.setString(2,  guildId);
+    		preparedStatement.setString(3,  userId);
     		
     		preparedStatement.executeUpdate();
     		
@@ -176,8 +176,8 @@ public class SQLiteUtil {
                 // language=SQLite
                 .prepareStatement("UPDATE moderation SET mutedate = ? WHERE guild_id = ? AND user_Id = ?")) {
     		preparedStatement.setNull(1, java.sql.Types.NULL);
-    		preparedStatement.setString(2,  encryption.encrypt(guildId));
-    		preparedStatement.setString(3,  encryption.encrypt(userId));
+    		preparedStatement.setString(2,  guildId);
+    		preparedStatement.setString(3,  userId);
     		
     		preparedStatement.executeUpdate();
     		
@@ -190,8 +190,8 @@ public class SQLiteUtil {
     	try (Connection con = SQLiteDataSource.getConnection();final PreparedStatement preparedStatement = con
                 // language=SQLite
                .prepareStatement("DELETE FROM moderation WHERE guild_id = ? AND user_Id = ?")) {
-    		preparedStatement.setString(1,  encryption.encrypt(guildId));
-   		preparedStatement.setString(2,  encryption.encrypt(userId));
+    		preparedStatement.setString(1,  guildId);
+   		preparedStatement.setString(2,  userId);
     		
     		preparedStatement.executeUpdate();
     		
@@ -201,7 +201,6 @@ public class SQLiteUtil {
     }
     
     public static void deleteAllFromGuild(String guildId) {
-    	guildId = encryption.encrypt(guildId);
     	try (Connection con = SQLiteDataSource.getConnection();final PreparedStatement preparedStatement = con
                 // language=SQLite
                 .prepareStatement("DELETE FROM moderation WHERE guild_id = ?")) {
@@ -244,8 +243,8 @@ public class SQLiteUtil {
 		    format = new SimpleDateFormat("yyyy-MM-dd");
 		    date = format.parse(format.format(date));
 		    
-			insertStatement.setString(1,  encryption.encrypt(messageId));
-			insertStatement.setString(2,  encryption.encrypt(userId));
+			insertStatement.setString(1,  messageId);
+			insertStatement.setString(2,  userId);
 			insertStatement.setString(3,  encryption.encrypt(message));
 			insertStatement.setString(4, date.toString());
 			
@@ -289,11 +288,11 @@ public class SQLiteUtil {
                 // language=SQLite
                 .prepareStatement("SELECT author_id, message FROM messages WHERE message_Id = ?")) {
 
-    		preparedStatement.setString(1,  encryption.encrypt(messageId));
+    		preparedStatement.setString(1,  messageId);
     	
     		try (final ResultSet resultSet = preparedStatement.executeQuery()) {
 			    if (resultSet.next()) {
-        				String user =  encryption.decrypt(resultSet.getString("author_id"));
+        				String user =  resultSet.getString("author_id");
         				String message =  encryption.decrypt(resultSet.getString("message"));
         			
         				result = (user + "-" + message);
@@ -314,7 +313,7 @@ public class SQLiteUtil {
                 // language=SQLite
                 .prepareStatement("DELETE FROM messages WHERE message_id = ?")) {
     		
-    		deleteStatement.setString(1,  encryption.encrypt(messageId));
+    		deleteStatement.setString(1,  messageId);
     		
     		deleteStatement.execute();
     		
@@ -327,7 +326,6 @@ public class SQLiteUtil {
     	try (Connection con = SQLiteDataSource.getConnection();final PreparedStatement preparedStatement = con
                 // language=SQLite
                 .prepareStatement("SELECT message FROM messages WHERE message_Id = ?")) {
-    		messageId = encryption.encrypt(messageId);
     		preparedStatement.setString(1, messageId);
     		
     		String result = null;
@@ -359,7 +357,6 @@ public class SQLiteUtil {
     	try (Connection con = SQLiteDataSource.getConnection();final PreparedStatement preparedStatement = con
                 // language=SQLite
                 .prepareStatement("SELECT prefix FROM guild_settings WHERE guild_id = ?");) {
-    		guildId = encryption.encrypt(guildId);
     		preparedStatement.setString(1, guildId);
     		try (final ResultSet resultSet = preparedStatement.executeQuery()) {
     			if (resultSet.next()) {
@@ -402,7 +399,7 @@ public class SQLiteUtil {
       			// language=SQLite
       			.prepareStatement("UPDATE guild_settings SET prefix = ? WHERE guild_id = ?")) {
       		preparedStatement.setString(1, prefix);
-      		preparedStatement.setString(2, encryption.encrypt(guildId));
+      		preparedStatement.setString(2, guildId);
       		
       		preparedStatement.executeUpdate();
       		
@@ -417,8 +414,8 @@ public class SQLiteUtil {
     	try (Connection con = SQLiteDataSource.getConnection();final PreparedStatement preparedStatement = con
       			// language=SQLite
       			.prepareStatement("INSERT INTO giveaways(channel_id,message_id,timestamp) VALUES(?,?,?)")) {
-      		preparedStatement.setString(1, encryption.encrypt(channelId));
-      		preparedStatement.setString(2, encryption.encrypt(messageId));
+      		preparedStatement.setString(1, channelId);
+      		preparedStatement.setString(2, messageId);
       		preparedStatement.setLong(3, timestamp);
       		preparedStatement.executeUpdate();
       		
@@ -437,8 +434,8 @@ public class SQLiteUtil {
     		try (final ResultSet resultSet = preparedStatement.executeQuery()) {
     			while (resultSet.next()) {
     				long date = resultSet.getLong("timestamp");
-    				String messageId = encryption.decrypt(resultSet.getString("message_id"));
-    				String channelId = encryption.decrypt(resultSet.getString("channel_id"));
+    				String messageId = resultSet.getString("message_id");
+    				String channelId = resultSet.getString("channel_id");
     				map.put(channelId + "-" + messageId, date);
     			}
     		}
@@ -460,8 +457,8 @@ public class SQLiteUtil {
     		try (final ResultSet resultSet = preparedStatement.executeQuery()) {
     			while (resultSet.next()) {
     				long date = resultSet.getLong("timestamp");
-    				String messageId = encryption.decrypt(resultSet.getString("message_id"));
-    				String channelId = encryption.decrypt(resultSet.getString("channel_id"));
+    				String messageId = resultSet.getString("message_id");
+    				String channelId = resultSet.getString("channel_id");
     				map.put(channelId + "-" + messageId, date);
     			}
     		}
@@ -484,8 +481,8 @@ public class SQLiteUtil {
     		try (final ResultSet resultSet = preparedStatement.executeQuery()) {
     			while (resultSet.next()) {
     				long date = resultSet.getLong("timestamp");
-    				String messageId = encryption.decrypt(resultSet.getString("message_id"));
-    				String channelId = encryption.decrypt(resultSet.getString("channel_id"));
+    				String messageId = resultSet.getString("message_id");
+    				String channelId = resultSet.getString("channel_id");
     				map.put(channelId + "-" + messageId, date);
     			}
     		}
@@ -507,8 +504,8 @@ public class SQLiteUtil {
     		try (final ResultSet resultSet = preparedStatement.executeQuery()) {
     			while (resultSet.next()) {
     				long date = resultSet.getLong("timestamp");
-    				String messageId = encryption.decrypt(resultSet.getString("message_id"));
-    				String channelId = encryption.decrypt(resultSet.getString("channel_id"));
+    				String messageId = resultSet.getString("message_id");
+    				String channelId = resultSet.getString("channel_id");
     				map.put(channelId + "-" + messageId, date);
     			}
     		}
@@ -523,11 +520,11 @@ public class SQLiteUtil {
     	try (Connection con = SQLiteDataSource.getConnection();final PreparedStatement preparedStatement = con
       			// language=SQLite
       			.prepareStatement("SELECT channel_id FROM giveaways WHERE message_id = ?")) {
-    		preparedStatement.setString(1, encryption.encrypt(messageId));
+    		preparedStatement.setString(1, (messageId));
       		
     		try (final ResultSet resultSet = preparedStatement.executeQuery()) {
     			if (resultSet.next()) {
-    				String channelId = encryption.decrypt(resultSet.getString("channel_id"));
+    				String channelId = resultSet.getString("channel_id");
     				return channelId;
     			}
     		}
@@ -542,7 +539,7 @@ public class SQLiteUtil {
     	try (Connection con = SQLiteDataSource.getConnection();final PreparedStatement preparedStatement = con
     			.prepareStatement("DELETE FROM giveaways WHERE message_id = ?")) {
     	
-    		preparedStatement.setString(1, encryption.encrypt(messageId));
+    		preparedStatement.setString(1, messageId);
     		preparedStatement.execute();
     		
     	} catch (SQLException e) {

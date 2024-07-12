@@ -32,13 +32,13 @@ public class Main {
     public static Config config;
 
 	 public Main() throws IOException, SQLException {
-		config = new Config(new File(Constants.configpath)); 
+		config = new Config(new File(Constants.path + Constants.configpath)); 
 	    Logger logger = LoggerFactory.getLogger(Main.class);
     	SQLiteDataSource.getConnection();
     	logger.debug("SQLite database connection established!");
     	SQLiteUtil.encryption = new Encryption(config.getString("key").toCharArray(), config.getString("salt").getBytes());
     	logger.debug("Encryption services initialized");
-    	 
+    	//new Updater().update();
         CommandManager commandManager = new CommandManager();
         Listener listener = new Listener(commandManager);
         WebUtils.setUserAgent("Mozilla/5.0 MyticOverbot/MysticOverlord#7967");
@@ -48,20 +48,20 @@ public class Main {
         		.setTimestamp(Instant.now()));
         try {
             logger.info("Booting");
-             JDABuilder.createDefault(config.getString("token"))
+             JDABuilder.createDefault(config.getString("beta-token"))
             .setStatus(OnlineStatus.DO_NOT_DISTURB)
-            .setActivity(Activity.playing("Starting up..."))
+            .setActivity(Activity.playing("Booting..."))
             .addEventListeners(listener, new ModListener())
             .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES)
             .enableCache(CacheFlag.VOICE_STATE)
-            .setChunkingFilter(ChunkingFilter.ALL)
+            .setChunkingFilter(ChunkingFilter.NONE)
             .build()
             .awaitReady();
             logger.info("Running");
         }
         catch (Exception e) {      
         	ExceptionHandler.handle(e);     
-        }
+        } 
     }
 
     public static void main(String[] args) throws IOException, SQLException {
